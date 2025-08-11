@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search Results - TN Bus Reservation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f3f3;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: #0055a5;
+            margin-bottom: 30px;
+        }
+
+        .route-card {
+            background-color: #ffffff;
+            padding: 20px;
+            margin: 10px;
+            border-radius: 12px;
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+            width: 450px;
+        }
+
+        .route-card h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+
+        .route-card p {
+            margin: 5px 0;
+        }
+
+        .no-result {
+            color: red;
+            font-weight: bold;
+        }
+
+        a.book-btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #0055a5;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+
+        a.book-btn:hover {
+            background-color: #003f7d;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Available Buses from {{ source }} to {{ destination }} on {{ date }}</h1>
+
+    {% if routes %}
+        {% for route in routes %}
+            <div class="route-card">
+                <h3>{{ route.from_location }} ➜ {{ route.to_location }}</h3>
+                <p><strong>Departure:</strong> {{ route.departure_time }}</p>
+                <p><strong>Fare:</strong> ₹{{ route.fare }}</p>
+                <a href="{% url 'book_ticket' route.id %}" class="book-btn">Book Now</a>
+
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="no-result">Sorry, no buses found for your search.</div>
+    {% endif %}
+
+</body>
+</html>

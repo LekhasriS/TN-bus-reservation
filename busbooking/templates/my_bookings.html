@@ -1,0 +1,34 @@
+<!-- templates/my_bookings.html -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Bookings</title>
+</head>
+<body>
+    <h2>My Bookings</h2>
+
+    {% if bookings %}
+        <ul>
+        {% for booking in bookings %}
+            <li>
+                {{ booking.passenger_name }} — Seat {{ booking.seat_number }} — 
+                {{ booking.route.from_location }} ➜ {{ booking.route.to_location }} 
+                on {{ booking.route.travel_date }} at {{ booking.route.departure_time }}
+
+                {% if booking.can_cancel %}
+                    <form method="POST" action="{% url 'cancel_booking' booking.id %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit">Cancel</button>
+                    </form>
+                {% else %}
+                    <span style="color: grey;">Cannot cancel</span>
+                {% endif %}
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No bookings found.</p>
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Book Ticket</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        body {
+            background-color: #f9f9f9;
+            padding: 40px;
+        }
+
+        .bus-seats {
+            display: grid;
+            grid-template-columns: repeat(4, 60px);
+            gap: 10px;
+            max-width: 300px;
+            margin: auto;
+            margin-bottom: 30px;
+        }
+
+        .seat {
+            padding: 12px 0;
+            background-color: #d9edf7;
+            border: 1px solid #31708f;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        .seat.selected {
+            background-color: #5cb85c;
+            color: white;
+        }
+
+        .seat.booked {
+            background-color: #ccc;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        h2 {
+            text-align: center;
+            color: #0055a5;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Book Ticket for {{ route.from_location }} ➜ {{ route.to_location }}</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label for="passenger_name" class="form-label">Passenger Name:</label>
+            <input type="text" class="form-control" name="passenger_name" id="passenger_name" required>
+        </div>
+
+        <h5 class="mt-4 mb-3">Select Seat:</h5>
+        <div class="bus-seats">
+            {% for i in seat_numbers %}
+
+                {% if i in booked_seats %}
+                    <div class="seat booked">{{ i }}</div>
+                {% else %}
+                    <div class="seat" onclick="selectSeat(this)">{{ i }}</div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <input type="hidden" name="seat_number" id="seat_number" required>
+
+        <button type="submit" class="btn btn-primary mt-3">Book Now</button>
+    </form>
+</div>
+
+<script>
+    function selectSeat(seatDiv) {
+        if (seatDiv.classList.contains('booked')) return;
+
+        // Clear previous selections
+        document.querySelectorAll('.seat').forEach(seat => {
+            seat.classList.remove('selected');
+        });
+
+        // Mark selected seat
+        seatDiv.classList.add('selected');
+        document.getElementById('seat_number').value = seatDiv.innerText;
+    }
+</script>
+</body>
+</html>

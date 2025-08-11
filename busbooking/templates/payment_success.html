@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payment Successful</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body style="background-color:#eaffea; padding: 40px; font-family: Arial, sans-serif;">
+    <div class="container">
+        <div class="alert alert-success text-center">
+            <h2>Payment Successful!</h2>
+            <p>Booking Confirmed for {{ booking.passenger_name }}.</p>
+            <p>Route: {{ booking.route.from_location }} ➜ {{ booking.route.to_location }}</p>
+            <p>Date: {{ booking.route.travel_date }} | Seat: {{ booking.seat_number }}</p>
+            <a href="/" class="btn btn-primary mt-3">Back to Home</a>
+        </div>
+    </div>
+</body>
+</html>
