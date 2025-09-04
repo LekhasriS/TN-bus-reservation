@@ -1,6 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.timezone import now
-from datetime import datetime, timedelta
 from .models import Route, Booking
 from django.views.decorators.csrf import csrf_exempt
 
@@ -48,7 +47,8 @@ def book_ticket(request, route_id):
         booking = Booking.objects.create(
             route=route,
             passenger_name=name,
-            seat_number=seat_number
+            seat_number=seat_number,
+            status="Confirmed"
         )
         return redirect('payment', booking_id=booking.id)
 
@@ -74,30 +74,16 @@ def payment(request, booking_id):
 # Show user bookings with cancel option
 def my_bookings(request):
     bookings = Booking.objects.filter(payment_completed=True).select_related('route')
-    current_time = now()
-
-    for booking in bookings:
-        try:
-            departure_datetime = datetime.combine(booking.route.travel_date, booking.route.departure_time)
-            booking.can_cancel = current_time < departure_datetime - timedelta(hours=2)
-        except:
-            booking.can_cancel = False
-
     return render(request, 'my_bookings.html', {'bookings': bookings})
 
-# Cancel a booking (only before 2 hrs of departure)
+# Cancel a booking (no restriction)
 @csrf_exempt
 def cancel_booking(request, booking_id):
     booking = get_object_or_404(Booking, id=booking_id)
 
     if request.method == 'POST':
-        departure_datetime = datetime.combine(booking.route.travel_date, booking.route.departure_time)
-        if now() < departure_datetime - timedelta(hours=2):
-            booking.delete()
-            return render(request, 'cancel_success.html', {'booking': booking})
-        else:
-            return render(request, 'error.html', {
-                'message': 'Cancellation not allowed within 2 hours of departure.'
-            })
+        booking.status = "Cancelled"
+        booking.save()
+        return render(request, 'cancel_success.html', {'booking': booking})
 
     return redirect('my_bookings')

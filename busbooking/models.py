@@ -10,13 +10,22 @@ class Route(models.Model):
     def __str__(self):
         return f"{self.from_location} ➜ {self.to_location} on {self.travel_date}"
 
+
 class Booking(models.Model):
+    STATUS_CHOICES = [
+        ("Confirmed", "Confirmed"),
+        ("Cancelled", "Cancelled"),
+    ]
+
     route = models.ForeignKey(Route, on_delete=models.CASCADE)
     passenger_name = models.CharField(max_length=100)
     seat_number = models.IntegerField()
-    payment_completed = models.BooleanField(default=False)  # 👈 Add this line
+    payment_completed = models.BooleanField(default=False)
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="Confirmed"
+    )
 
     def __str__(self):
-        return f"{self.passenger_name} - Seat {self.seat_number} on {self.route}"
-
-    
+        return f"{self.passenger_name} - Seat {self.seat_number} ({self.status})"
